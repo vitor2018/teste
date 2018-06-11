@@ -23,32 +23,39 @@ namespace API.Controllers
         [HttpGet]
         public string GetCalculoHistoricoLog(int idUsuario, int idAmigo)
         {
-            Amigos amigoSelecionado = db.Amigos.FirstOrDefault(a => a.ID_Amigo == idAmigo);
-            List<Amigos> amigos = db.Amigos.Where(a => a.ID_Usuario == idUsuario && a.ID_Amigo != idAmigo).ToList();
-            string amigosProximos = "";
-            Dictionary<string, double> distancias = new Dictionary<string, double>();
-            double aux = 0;
+            try
+            {
+                Amigos amigoSelecionado = db.Amigos.FirstOrDefault(a => a.ID_Amigo == idAmigo);
+                List<Amigos> amigos = db.Amigos.Where(a => a.ID_Usuario == idUsuario && a.ID_Amigo != idAmigo).ToList();
+                string amigosProximos = "";
+                Dictionary<string, double> distancias = new Dictionary<string, double>();
+                double aux = 0;
 
-            amigos.ForEach(a => {
-                aux = CalculaDistanciaPontos(Convert.ToDouble(amigoSelecionado.NR_Lat), Convert.ToDouble(amigoSelecionado.NR_Lng), Convert.ToDouble(a.NR_Lat), Convert.ToDouble(a.NR_Lng));
-                distancias.Add(a.NM_Amigo, aux);
-                db.Set<CalculoHistoricoLog>().Add(new CalculoHistoricoLog()
-                {
-                    ID_Usuario = idUsuario,
-                    NM_Calculo = aux.ToString(),
-                    DT_Criacao = DateTime.Now
+                amigos.ForEach(a => {
+                    aux = CalculaDistanciaPontos(Convert.ToDouble(amigoSelecionado.NR_Lat), Convert.ToDouble(amigoSelecionado.NR_Lng), Convert.ToDouble(a.NR_Lat), Convert.ToDouble(a.NR_Lng));
+                    distancias.Add(a.NM_Amigo, aux);
+                    db.Set<CalculoHistoricoLog>().Add(new CalculoHistoricoLog()
+                    {
+                        ID_Usuario = idUsuario,
+                        NM_Calculo = aux.ToString(),
+                        DT_Criacao = DateTime.Now
+                    });
+                    db.SaveChanges();
                 });
-                db.SaveChanges();                
-            });
 
-            distancias.OrderBy(a => a.Value).Take(3).ToList().ForEach(d => {
-                amigosProximos = string.Concat(amigosProximos, string.Format("{0} ", d.Key));
-            });
+                distancias.OrderBy(a => a.Value).Take(3).ToList().ForEach(d => {
+                    amigosProximos = string.Concat(amigosProximos, string.Format("{0} ", d.Key));
+                });
 
-            if(distancias == null || distancias.Count == 0)
-                amigosProximos = "Nenhum amigo encontrado.";
+                if (distancias == null || distancias.Count == 0)
+                    amigosProximos = "Nenhum amigo encontrado.";
 
-            return amigosProximos;
+                return amigosProximos;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(HttpStatusCode.InternalServerError).ToString();
+            }            
         }        
 
         protected override void Dispose(bool disposing)

@@ -1,4 +1,5 @@
 ﻿using API.Models;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
@@ -18,92 +19,140 @@ namespace APILocalizaAmigos.Controllers
         [Route("VerificaCep/{cep}")]
         public bool GetAmigos(string cep)
         {
-            return db.Amigos.Count(a => a.NR_CEP.Equals(cep)) > 0;
+            try
+            {
+                return db.Amigos.Count(a => a.NR_CEP.Equals(cep)) > 0;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }            
         }
         
         public IQueryable<Amigos> GetAmigos()
         {
-            return db.Amigos;
+            try
+            {
+                return db.Amigos;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }            
         }
 
         [Route("{id}", Name = "GetAmigo")]
         [ResponseType(typeof(Amigos))]
         public IHttpActionResult GetAmigos(int id)
         {
-            Amigos amigos = db.Amigos.Find(id);
-            if (amigos == null)
+            try
             {
-                return NotFound();
-            }
+                Amigos amigos = db.Amigos.Find(id);
+                if (amigos == null)
+                {
+                    return NotFound();
+                }
 
-            return Ok(amigos);
+                return Ok(amigos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(HttpStatusCode.InternalServerError);
+            }            
         }
         [Route("GetByIdUsuario/{id}")]
         [ResponseType(typeof(List<Amigos>))]
         public IHttpActionResult GetByIdUsuario(int id)
         {
-            List<Amigos> amigos = db.Amigos.Where(a => a.ID_Usuario == id).ToList();
-            if (amigos == null)
+            try
             {
-                return NotFound();
-            }
+                List<Amigos> amigos = db.Amigos.Where(a => a.ID_Usuario == id).ToList();
+                if (amigos == null)
+                {
+                    return NotFound();
+                }
 
-            return Ok(amigos);
+                return Ok(amigos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(HttpStatusCode.InternalServerError);
+            }            
         }        
 
         [Route("{id}/{amigos}")]
         [ResponseType(typeof(void))]
         public IHttpActionResult PutAmigos(int id, Amigos amigos)
         {
-            if (id != amigos.ID_Amigo)
-            {
-                return BadRequest();
-            }
-
-            db.Entry(amigos).State = EntityState.Modified;
-
             try
             {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AmigosExists(id))
+                if (id != amigos.ID_Amigo)
                 {
-                    return NotFound();
+                    return BadRequest();
                 }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return StatusCode(HttpStatusCode.NoContent);
+                db.Entry(amigos).State = EntityState.Modified;
+
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!AmigosExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                return StatusCode(HttpStatusCode.NoContent);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(HttpStatusCode.InternalServerError);
+            }            
         }
         
         [ResponseType(typeof(Amigos))]
         public IHttpActionResult PostAmigos(Amigos amigos)
         {
-            db.Amigos.Add(amigos);
-            db.SaveChanges();
+            try
+            {
+                db.Amigos.Add(amigos);
+                db.SaveChanges();
 
-            return CreatedAtRoute("GetAmigo", new { id = amigos.ID_Amigo }, amigos);
+                return CreatedAtRoute("GetAmigo", new { id = amigos.ID_Amigo }, amigos);
+            } catch(Exception ex)
+            {
+                return StatusCode(HttpStatusCode.InternalServerError);
+            }            
         }
 
         [Route("{id}")]
         [ResponseType(typeof(Amigos))]
         public IHttpActionResult DeleteAmigos(int id)
         {
-            Amigos amigos = db.Amigos.Find(id);
-            if (amigos == null)
+            try
             {
-                return NotFound();
+                Amigos amigos = db.Amigos.Find(id);
+                if (amigos == null)
+                {
+                    return NotFound();
+                }
+
+                db.Amigos.Remove(amigos);
+                db.SaveChanges();
+
+                return Ok(amigos);
             }
-
-            db.Amigos.Remove(amigos);
-            db.SaveChanges();
-
-            return Ok(amigos);
+            catch (Exception ex)
+            {
+                return StatusCode(HttpStatusCode.InternalServerError);
+            }            
         }
 
         protected override void Dispose(bool disposing)
