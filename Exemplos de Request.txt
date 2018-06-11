@@ -1,0 +1,4 @@
+GET
+http://localhost:52671/api/Usuarios
+http://localhost:52671/api/Usuarios/1
+http://localhost:52671/api/CalculoHistoricoLogs/1/2
