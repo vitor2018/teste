@@ -1,0 +1,53 @@
+﻿@model LocalizaAmigos.Models.Usuario
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+@using (Html.BeginForm("Cadastro", "Usuario", FormMethod.Post, new { id = "formCadastro" }))
+{
+    <div class="row">
+        <div class="form-group col-md-4" style="margin: 0 auto;">
+            <div class="col-md-12">
+                <h2>Cadastro</h2>
+            </div>
+            <div class="col-md-12">
+                @Html.Label("Usuário")
+                @Html.TextBoxFor(c => c.NM_Usuario, new { @class = "form-control col-md-12" })
+            </div>
+            <div class="col-md-12">
+                @Html.Label("Senha")
+                @Html.TextBoxFor(c => c.NM_Senha, new { @class = "form-control col-md-12", @type = "password" })
+            </div>
+            <div class="col-md-5" style="margin-top: 20px; float: left;">
+                <input type="button" value="Voltar" id="btnVoltar" class="form-control btn-outline-primary" />
+            </div>
+            <div class="col-md-5" style="margin-top: 20px; float: right;">
+                <input type="submit" value="Cadastrar" id="btnSubmit" class="form-control btn-outline-success" />
+            </div>
+        </div>
+    </div>
+}
+@Html.Partial("_Loading")
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#container-loading").hide();
+            if ("@ViewBag.Confirma" === "1") {
+                alert("Usuário cadastrado com sucesso!");
+            } else if ("@ViewBag.Confirma" === "-1") {
+                alert("Nome de usuário já existente.");
+            } else if ("@ViewBag.Confirma" === "-2") {
+                alert("Erro");
+            }
+        });
+
+        $("#btnSubmit").on("click", function () {
+            $("#container-loading").show();
+        });
+
+        $("#btnVoltar").on("click", function () {
+            window.location.href = "@Url.Action("Index", "Usuario", new { area = "" })";
+        });
+    </script>
+}

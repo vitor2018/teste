@@ -1,0 +1,36 @@
+﻿body {
+    padding-top: 0;
+}
+
+#container-loading {
+    display: none;
+    color: white !important;
+    position: fixed;
+    background: rgba(0,0,0,0.5);
+    z-index: 100000;
+    width: 100% !important;
+    min-width: 100% !important;
+    top: 0;
+    left: 0;
+    min-height: 100% !important;
+}
+
+#container-loading div#content {
+    position: fixed;
+    width: 100% !important;
+    min-width: 100% !important;
+    height: 100% !important;
+    top: 50%;
+    min-height: 100% !important;
+}
+
+#lblAguardeLoading {
+    color: #fff;
+    margin-top: 10px;
+    font-size: 14px;
+    text-shadow: 0 0 3px #000;
+    font-weight: normal;
+    margin-left: 6px;
+    font-weight: bold;
+    font-family: "Arial", Helvetica, Arial, sans-serif
+}

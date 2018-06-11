@@ -1,0 +1,140 @@
+﻿@{
+    ViewBag.Title = "Amigos";
+}
+
+@Html.Hidden("idUsuario", (int)Session["ID_Usuario"])
+@using (Html.BeginForm("Amigos", "Usuario", FormMethod.Post, new { id = "formAmigos" }))
+{
+<div class="row">
+    <div class="col-md-12" style="margin: 0 auto;">
+        <h2>Amigo</h2>
+    </div>
+    <div class="col-md-4">
+        @Html.Label("Nome")
+        @Html.TextBox("NM_Amigo", "", new { @class = "form-control col-md-12", @maxlength = "150" })
+    </div>
+    <div class="col-md-4">
+        @Html.Label("CEP")
+        @Html.TextBox("NR_Cep", "", new { @class = "form-control col-md-12", @oninput = "Mascara(this, cep);", @maxlength = "9" })
+    </div>
+    <div class="col-md-4" style="margin-top: 30px; float: right;">        
+        <input type="button" value="Adicionar Amigo" id="btnAdicionar" class="form-control col-md-12 btn-outline-success" />
+    </div>
+</div>
+<div class="row" style="margin-top: 20px;">
+    <div class="col-md-12">
+        <table id="tblAmigos" class="table table-striped col-md-12">
+            <tr>
+                <td style="width: 50%;">Nome</td>
+                <td style="width: 30%;">Cep</td>
+                <td>Ação</td>
+            </tr>
+            @if (ViewBag.Amigos != null && ViewBag.Amigos.Count > 0)
+            {
+                foreach (LocalizaAmigos.Models.Amigo amigo in (List<LocalizaAmigos.Models.Amigo>)ViewBag.Amigos)
+                {
+                    <tr class="col-md-12">
+                        <td style="margin-right: 20px;">@amigo.NM_Amigo</td>
+                        <td style="margin-right: 20px;">@amigo.NR_CEP</td>
+                        <td><input type="button" value="Mostrar Amigos Próximos" class="form-control btn-outline-warning" onclick="calculaDistancia(@amigo.ID_Usuario,@amigo.ID_Amigo)" /></td>
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+</div>
+}
+@Html.Partial("_Loading")
+@section scripts{
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC-UM28Jv8RZ_J4gyyFDdkZtmmoNSxWK4I" type="text/javascript"></script>
+    <script src="~/Scripts/layout/mascaras.js"></script>
+    <script type="text/javascript">
+        const geocodert = new google.maps.Geocoder();
+        $(document).ready(function () {
+            $("#container-loading").hide();            
+            if ("@ViewBag.Confirma" === "1") {
+                alert("Usuário cadastrado com sucesso!");
+            } else if ("@ViewBag.Confirma" === "-1") {
+                alert("Nome de usuário já existente.");
+            } else if ("@ViewBag.Confirma" === "-2") {
+                alert("Erro");
+            }            
+        });
+
+        $("#btnAdicionar").on("click", function () {
+            $("#container-loading").show();
+            if (validaCampos()) {
+                $("#container-loading").hide();
+                alert("Preencha os campos com valores válidos.");
+            } else {                
+                setTimeout(function () {
+                    geocodert.geocode({ "address": $("#NR_Cep").val() }, function (results, status) {
+                        if (status === "OK") {
+                            lat = results[0].geometry.location.lat();
+                            lng = results[0].geometry.location.lng();
+                            salvaAmigo(lat, lng);
+                        } else {
+                            $("#container-loading").hide();
+                            alert("CEP inválido.");
+                        }
+                    })
+                }, 500);
+            }
+        });
+
+        function salvaAmigo(lat, lng) {            
+            $.ajax({
+                url: "@(Url.Action("SalvaAmigo", "Usuario", new { area = "" }))",
+                cache: false,
+                data: { idUsuario: $("#idUsuario").val(), nome: $("#NM_Amigo").val(), cep: $("#NR_Cep").val(), nrLat: lat.toString(), nrLng: lng.toString() },
+                type: "POST",                
+                success: function (result) {                    
+                    $("#container-loading").hide();
+                    if (result.isSuccess) {
+                        var tr = "<tr class='col-md-12'><td>" + $("#NM_Amigo").val() + "</td><td style='margin-right: 20px;'>" + $("#NR_Cep").val() +"</td><td><input type='button' value='Mostrar Amigos Próximos' class='form-control btn-outline-warning' onclick='calculaDistancia("+ $("#idUsuario").val() + "," + result.id + ")' /></td></tr>";
+                        $("#tblAmigos").append(tr);
+                    } else {
+                        alert(result.msg);
+                    }
+                    limpaCampos();
+                },
+                error: function (err) {
+                    limpaCampos();
+                    $("#container-loading").hide();
+                    alert(err.statusText);
+                }
+            });
+        }
+
+        function validaCampos() {
+            var retorno = false;
+
+            if ($("#NM_Amigo").val().trim() === "")
+                retorno = true;
+
+            if ($("#NR_Cep").val().trim() === "" || $("#NR_Cep").val().trim().length < 9)
+                retorno = true;
+
+            return retorno;
+        }
+
+        function limpaCampos() {
+            $("#NM_Amigo").val("");
+            $("#NR_Cep").val("");
+        }
+
+        function calculaDistancia(idUsuario, idAmigo) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', `http://localhost:52671/api/CalculoHistoricoLogs/${idUsuario}/${idAmigo}`, true);
+            xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
+            xhr.setRequestHeader('Authorization', `${sessionStorage.getItem('token')}`);
+
+            xhr.onload = function () {
+                var result = JSON.parse(this.responseText);
+                alert(`${result}`);
+            }
+
+            xhr.send();
+        }
+    </script>
+}

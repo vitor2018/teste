@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="LocalizaAmigosModelStoreContainer" CdmEntityContainer="LocalizaAmigosEntities">
+    <EntitySetMapping Name="Amigos">
+      <EntityTypeMapping TypeName="LocalizaAmigosModel.Amigos">
+        <MappingFragment StoreEntitySet="Amigos">
+          <ScalarProperty Name="NR_Lng" ColumnName="NR_Lng" />
+          <ScalarProperty Name="NR_Lat" ColumnName="NR_Lat" />
+          <ScalarProperty Name="NR_CEP" ColumnName="NR_CEP" />
+          <ScalarProperty Name="NM_Amigo" ColumnName="NM_Amigo" />
+          <ScalarProperty Name="ID_Usuario" ColumnName="ID_Usuario" />
+          <ScalarProperty Name="ID_Amigo" ColumnName="ID_Amigo" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CalculoHistoricoLog">
+      <EntityTypeMapping TypeName="LocalizaAmigosModel.CalculoHistoricoLog">
+        <MappingFragment StoreEntitySet="CalculoHistoricoLog">
+          <ScalarProperty Name="DT_Criacao" ColumnName="DT_Criacao" />
+          <ScalarProperty Name="NM_Calculo" ColumnName="NM_Calculo" />
+          <ScalarProperty Name="ID_Usuario" ColumnName="ID_Usuario" />
+          <ScalarProperty Name="ID_CalculoHistoricoLog" ColumnName="ID_CalculoHistoricoLog" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Usuarios">
+      <EntityTypeMapping TypeName="LocalizaAmigosModel.Usuarios">
+        <MappingFragment StoreEntitySet="Usuarios">
+          <ScalarProperty Name="NM_Senha" ColumnName="NM_Senha" />
+          <ScalarProperty Name="NM_Usuario" ColumnName="NM_Usuario" />
+          <ScalarProperty Name="ID_Usuario" ColumnName="ID_Usuario" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

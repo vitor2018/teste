@@ -1,0 +1,65 @@
+﻿@model LocalizaAmigos.Models.Usuario
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+@using (Html.BeginForm("Index", "Usuario", FormMethod.Post, new { id = "formLogin" }))
+{
+    <div class="row">
+        <div class="form-group col-md-4" style="margin: 0 auto;">
+            <div class="col-md-12">
+                <h2>Login</h2>
+            </div>
+            <div class="col-md-12">
+                @Html.Label("Usuário")
+                @Html.TextBoxFor(c => c.NM_Usuario, new { @class = "form-control col-md-12" })
+            </div>
+            <div class="col-md-12">
+                @Html.Label("Senha")
+                @Html.TextBoxFor(c => c.NM_Senha, new { @class = "form-control col-md-12", @type = "password" })
+            </div>
+            <div class="col-md-5" style="margin-top: 20px; float: left;">
+                <input type="button" value="Cadastrar" id="btnCadastrar" class="form-control btn-outline-primary" />
+            </div>
+            <div class="col-md-5" style="margin-top: 20px; float: right;">
+                <input type="button" value="Entrar" id="btnEntrar" class="form-control btn-outline-success" />
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#container-loading").hide();
+            if ("@ViewBag.Confirma" === "-1") {
+                alert("Usuário não encontrado.");
+            } else if ("@ViewBag.Confirma" === "-2") {
+                alert("Erro");
+            }
+        });
+
+        $("#btnEntrar").on("click", function () {
+            var nome = $("#NM_Usuario").val();
+            var senha = $("#NM_Senha").val();
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('POST', 'http://localhost:52671/token', true);
+            xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
+
+            xhr.onload = function () {
+                var result = JSON.parse(this.responseText);                
+                sessionStorage.setItem("token", `${result.token_type} ${result.access_token}`);         
+                document.forms[0].submit();
+            }
+
+            xhr.send(`grant_type=password&username=${nome}&password=${senha}`);
+        });
+
+        $("#btnCadastrar").on("click", function () {
+            window.location.href = "@Url.Action("Cadastro", "Usuario", new { area = "" })";
+        });
+    </script>    
+}

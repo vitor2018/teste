@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="226a0f1c592a40c8bd9895142dcbaab9" Name="Diagram">
+        <EntityTypeShape EntityType="LocalizaAmigosModel.Amigos" Width="1.5" PointX="3" PointY="3.75" />
+        <EntityTypeShape EntityType="LocalizaAmigosModel.CalculoHistoricoLog" Width="1.5" PointX="3" PointY="1.125" />
+        <EntityTypeShape EntityType="LocalizaAmigosModel.Usuarios" Width="1.5" PointX="0.75" PointY="2.625" />
+        <AssociationConnector Association="LocalizaAmigosModel.FK_Amigos_Usuarios" />
+        <AssociationConnector Association="LocalizaAmigosModel.FK_CalculoHistoricoLog_Usuarios" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="LocalizaAmigosModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Amigos">
+    <Key>
+      <PropertyRef Name="ID_Amigo" />
+    </Key>
+    <Property Name="ID_Amigo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="ID_Usuario" Type="int" Nullable="false" />
+    <Property Name="NM_Amigo" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="NR_CEP" Type="char" MaxLength="9" Nullable="false" />
+    <Property Name="NR_Lat" Type="decimal" Precision="24" Scale="12" Nullable="false" />
+    <Property Name="NR_Lng" Type="decimal" Precision="24" Scale="12" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CalculoHistoricoLog">
+    <Key>
+      <PropertyRef Name="ID_CalculoHistoricoLog" />
+    </Key>
+    <Property Name="ID_CalculoHistoricoLog" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="ID_Usuario" Type="int" Nullable="false" />
+    <Property Name="NM_Calculo" Type="varchar(max)" Nullable="false" />
+    <Property Name="DT_Criacao" Type="datetime" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Usuarios">
+    <Key>
+      <PropertyRef Name="ID_Usuario" />
+    </Key>
+    <Property Name="ID_Usuario" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="NM_Usuario" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="NM_Senha" Type="varchar" MaxLength="32" Nullable="false" />
+  </EntityType>
+  <Association Name="FK_Amigos_Usuarios">
+    <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="1" />
+    <End Role="Amigos" Type="Self.Amigos" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Usuarios">
+        <PropertyRef Name="ID_Usuario" />
+      </Principal>
+      <Dependent Role="Amigos">
+        <PropertyRef Name="ID_Usuario" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_CalculoHistoricoLog_Usuarios">
+    <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="1" />
+    <End Role="CalculoHistoricoLog" Type="Self.CalculoHistoricoLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Usuarios">
+        <PropertyRef Name="ID_Usuario" />
+      </Principal>
+      <Dependent Role="CalculoHistoricoLog">
+        <PropertyRef Name="ID_Usuario" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="LocalizaAmigosModelStoreContainer">
+    <EntitySet Name="Amigos" EntityType="Self.Amigos" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="CalculoHistoricoLog" EntityType="Self.CalculoHistoricoLog" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Usuarios" EntityType="Self.Usuarios" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_Amigos_Usuarios" Association="Self.FK_Amigos_Usuarios">
+      <End Role="Usuarios" EntitySet="Usuarios" />
+      <End Role="Amigos" EntitySet="Amigos" />
+    </AssociationSet>
+    <AssociationSet Name="FK_CalculoHistoricoLog_Usuarios" Association="Self.FK_CalculoHistoricoLog_Usuarios">
+      <End Role="Usuarios" EntitySet="Usuarios" />
+      <End Role="CalculoHistoricoLog" EntitySet="CalculoHistoricoLog" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
